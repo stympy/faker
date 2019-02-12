@@ -194,7 +194,6 @@ gem 'faker', :git => 'https://github.com/stympy/faker.git', :branch => 'master'
   - [Faker::String](doc/unreleased/default/string.md)
   - [Faker::Stripe](doc/unreleased/default/stripe.md)
   - [Faker::Subscription](doc/unreleased/default/subscription.md)
-  - [Faker::Superhero](doc/unreleased/default/superhero.md)
   - [Faker::Team](doc/unreleased/default/team.md)
   - [Faker::Time](doc/unreleased/default/time.md)
   - [Faker::Twitter](doc/unreleased/default/twitter.md)
@@ -219,6 +218,9 @@ gem 'faker', :git => 'https://github.com/stympy/faker.git', :branch => 'master'
   - [Faker::Creature::Animal](doc/unreleased/creature/animal.md)
   - [Faker::Creature::Cat](doc/unreleased/creature/cat.md)
   - [Faker::Creature::Dog](doc/unreleased/creature/dog.md)
+
+### Comics
+  - [Faker::Comics::Superhero](doc/unreleased/comics/superhero.md)
 
 ### Games
   - [Faker::Games::Dota](doc/unreleased/games/dota.md)
