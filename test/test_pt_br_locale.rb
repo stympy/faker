@@ -13,7 +13,6 @@ class TestPtBrLocale < Test::Unit::TestCase
 
   def test_pt_br_address_methods
     assert Faker::Address.city.is_a? String
-
     assert Faker::Address.state_abbr.is_a? String
     assert Faker::Address.state_abbr.match(/^[A-Z]{2}$/)
 
