@@ -36,11 +36,11 @@ module Faker
       end
 
       def product_name
-        "#{fetch('commerce.product_name.adjective')} #{fetch('commerce.product_name.material')} #{fetch('commerce.product_name.product')}"
+        parse('commerce.product_name')
       end
 
       def material
-        fetch('commerce.product_name.material')
+        fetch('commerce.material')
       end
 
       def price(legacy_range = NOT_GIVEN, legacy_as_string = NOT_GIVEN, range: 0..100.0, as_string: false)
