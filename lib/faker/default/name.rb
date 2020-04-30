@@ -46,6 +46,13 @@ module Faker
         fetch('name.suffix')
       end
 
+      def international_name(from_locales: I18n.config.available_locales)
+        locale = from_locales.sample(random: Faker::Config.random)
+        with_locale(locale) do
+          name
+        end
+      end
+
       def initials(legacy_number = NOT_GIVEN, number: 3)
         warn_for_deprecated_arguments do |keywords|
           keywords << :number if legacy_number != NOT_GIVEN
