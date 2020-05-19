@@ -175,59 +175,59 @@ class TestFakerInternet < Test::Unit::TestCase
   end
 
   def test_ip_v4_address
-    assert_equal 3, @tester.ip_v4_address.count('.')
-
     100.times do
-      assert @tester.ip_v4_address.split('.').map(&:to_i).min >= 0
-      assert @tester.ip_v4_address.split('.').map(&:to_i).max <= 255
+      assert_nothing_raised IPAddr::Error, IPAddr::AddressFamilyError, IPAddr::InvalidAddressError, StandardError do
+        address = IPAddr.new(@tester.ip_v4_address, Socket::AF_INET)
+        raise StandardError, "Invalid IP V4 #{address}" unless address.ipv4?
+      end
     end
   end
 
   def test_private_ip_v4_address
-    regexps = [
-      /^10\./,                                       # 10.0.0.0    - 10.255.255.255
-      /^100\.(6[4-9]|[7-9]\d|1[0-1]\d|12[0-7])\./,   # 100.64.0.0  - 100.127.255.255
-      /^127\./,                                      # 127.0.0.0   - 127.255.255.255
-      /^169\.254\./,                                 # 169.254.0.0 - 169.254.255.255
-      /^172\.(1[6-9]|2\d|3[0-1])\./,                 # 172.16.0.0  - 172.31.255.255
-      /^192\.0\.0\./,                                # 192.0.0.0   - 192.0.0.255
-      /^192\.168\./,                                 # 192.168.0.0 - 192.168.255.255
-      /^198\.(1[8-9])\./                             # 198.18.0.0  - 198.19.255.255
-    ]
-    expected = Regexp.new regexps.collect { |reg| "(#{reg})" }.join('|')
-
     1000.times do
       address = @tester.private_ip_v4_address
-      assert_match expected, address
+      if RUBY_VERSION >= '2.5.0'
+        assert IPAddr.new(address, Socket::AF_INET).private?
+      else
+        assert Faker::Internet.send(:private_ipv4_subnets).detect(false) { |i| IPAddr.new(i).include?(address) }
+      end
     end
   end
 
   def test_public_ip_v4_address
-    private = [
-      /^10\./,                                       # 10.0.0.0    - 10.255.255.255
-      /^100\.(6[4-9]|[7-9]\d|1[0-1]\d|12[0-7])\./,   # 100.64.0.0  - 100.127.255.255
-      /^127\./,                                      # 127.0.0.0   - 127.255.255.255
-      /^169\.254\./,                                 # 169.254.0.0 - 169.254.255.255
-      /^172\.(1[6-9]|2\d|3[0-1])\./,                 # 172.16.0.0  - 172.31.255.255
-      /^192\.0\.0\./,                                # 192.0.0.0   - 192.0.0.255
-      /^192\.168\./,                                 # 192.168.0.0 - 192.168.255.255
-      /^198\.(1[8-9])\./                             # 198.18.0.0  - 198.19.255.255
-    ]
-
-    reserved = [
-      /^0\./,                 # 0.0.0.0      - 0.255.255.255
-      /^192\.0\.2\./,         # 192.0.2.0    - 192.0.2.255
-      /^192\.88\.99\./,       # 192.88.99.0  - 192.88.99.255
-      /^198\.51\.100\./,      # 198.51.100.0 - 198.51.100.255
-      /^203\.0\.113\./,       # 203.0.113.0  - 203.0.113.255
-      /^(22[4-9]|23\d)\./,    # 224.0.0.0    - 239.255.255.255
-      /^(24\d|25[0-5])\./     # 240.0.0.0    - 255.255.255.254  and  255.255.255.255
-    ]
-
     1000.times do
       address = @tester.public_ip_v4_address
-      private.each { |reg| assert_not_match reg, address }
-      reserved.each { |reg| assert_not_match reg, address }
+      if RUBY_VERSION >= '2.5.0'
+        ip_address = IPAddr.new(address, Socket::AF_INET) # may throw in case of invalid address, but the  case is handled above
+        puts "#{ip_address} link_local ? #{ip_address.link_local?}"
+        puts "#{ip_address} private ? #{ip_address.private?}"
+        puts "#{ip_address} loopback? #{ip_address.loopback?}"
+        assert !(ip_address.private? || ip_address.loopback? || ip_address.link_local?)
+      else
+        assert Faker::Internet.send(:public_ipv4_subnets).detect(false) { |i| IPAddr.new(i).include?(address) }
+      end
+    end
+  end
+
+  def test_link_local_ip_v4_address
+    1000.times do
+      address = @tester.link_local_ip_v4_address
+      if RUBY_VERSION >= '2.5.0'
+        assert IPAddr.new(address, Socket::AF_INET).link_local?
+      else
+        assert Faker::Internet.send(:link_local_ipv4_subnets).detect(false) { |i| IPAddr.new(i).include?(address) }
+      end
+    end
+  end
+
+  def test_loopback_ip_v4_address
+    1000.times do
+      address = @tester.loopback_ip_v4_address
+      if RUBY_VERSION >= '2.5.0'
+        assert IPAddr.new(address, Socket::AF_INET).loopback?
+      else
+        assert Faker::Internet.send(:loopback_ipv4_subnets).detect(false) { |i| IPAddr.new(i).include?(address) }
+      end
     end
   end
 
@@ -237,6 +237,26 @@ class TestFakerInternet < Test::Unit::TestCase
     1000.times do
       assert((1..32).cover?(@tester.ip_v4_cidr.split('/').last.to_i))
     end
+  end
+
+  def test_public_ip_v4_cidr
+    address = @tester.public_ip_v4_cidr
+    assert Faker::Internet.send(:public_ipv4_subnets).detect(false) { |i| IPAddr.new(i).include?(address) }
+  end
+
+  def test_private_ip_v4_cidr
+    address = @tester.private_ip_v4_cidr
+    assert Faker::Internet.send(:private_ipv4_subnets).detect(false) { |i| IPAddr.new(i).include?(address) }
+  end
+
+  def test_loopback_ip_v4_cidr
+    address = @tester.loopback_ip_v4_cidr
+    assert Faker::Internet.send(:loopback_ipv4_subnets).detect(false) { |i| IPAddr.new(i).include?(address) }
+  end
+
+  def test_link_local_ip_v4_cidr
+    address = @tester.link_local_ip_v4_cidr
+    assert Faker::Internet.send(:link_local_ipv4_subnets).detect(false) { |i| IPAddr.new(i).include?(address) }
   end
 
   def test_mac_address
@@ -252,10 +272,56 @@ class TestFakerInternet < Test::Unit::TestCase
   end
 
   def test_ip_v6_address
-    assert_equal 7, @tester.ip_v6_address.count(':')
-
     100.times do
-      assert @tester.ip_v6_address.split('.').map { |h| "0x#{h}".hex }.max <= 65_535
+      assert_nothing_raised IPAddr::Error, IPAddr::AddressFamilyError, IPAddr::InvalidAddressError, StandardError do
+        address = IPAddr.new(@tester.ip_v6_address, ::Socket::AF_INET6)
+        raise StandardError, "Invalid IP V6 #{address}" unless address.ipv6?
+      end
+    end
+  end
+
+  def test_link_local_ip_v6_address
+    1000.times do
+      address = @tester.link_local_ip_v6_address
+      if RUBY_VERSION >= '2.5.0'
+        assert IPAddr.new(address, Socket::AF_INET6).link_local?
+      else
+        assert Faker::Internet.send(:link_local_ipv6_subnets).detect(false) { |i| IPAddr.new(i).include?(address) }
+      end
+    end
+  end
+
+  def test_loopback_ip_v6_address
+    1000.times do
+      address = @tester.loopback_ip_v6_address
+      if RUBY_VERSION >= '2.5.0'
+        assert IPAddr.new(address, Socket::AF_INET6).loopback?
+      else
+        assert Faker::Internet.send(:loopback_ipv6_subnets).detect(false) { |i| IPAddr.new(i).include?(address) }
+      end
+    end
+  end
+
+  def test_private_ip_v6_address
+    1000.times do
+      address = @tester.private_ip_v6_address
+      if RUBY_VERSION >= '2.5.0'
+        assert IPAddr.new(address, Socket::AF_INET6).private?
+      else
+        assert Faker::Internet.send(:private_ipv6_subnets).detect(false) { |i| IPAddr.new(i).include?(address) }
+      end
+    end
+  end
+
+  def test_public_ip_v6_address
+    1000.times do
+      address = @tester.public_ip_v6_address
+      if RUBY_VERSION >= '2.5.0'
+        ip_address = IPAddr.new(address, Socket::AF_INET6) # may throw in case of invalid address, but the  case is handled above
+        assert !(ip_address.private? || ip_address.loopback? || ip_address.link_local?)
+      else
+        assert Faker::Internet.send(:public_ipv6_subnets).detect(false) { |i| IPAddr.new(i).include?(address) }
+      end
     end
   end
 
@@ -265,6 +331,26 @@ class TestFakerInternet < Test::Unit::TestCase
     1000.times do
       assert((1..128).cover?(@tester.ip_v6_cidr.split('/').last.to_i))
     end
+  end
+
+  def test_public_ip_v6_cidr
+    address = @tester.public_ip_v6_cidr
+    assert Faker::Internet.send(:public_ipv6_subnets).detect(false) { |i| IPAddr.new(i).include?(address) }
+  end
+
+  def test_private_ip_v6_cidr
+    address = @tester.private_ip_v6_cidr
+    assert Faker::Internet.send(:private_ipv6_subnets).detect(false) { |i| IPAddr.new(i).include?(address) }
+  end
+
+  def test_loopback_ip_v6_cidr
+    address = @tester.loopback_ip_v6_cidr
+    assert Faker::Internet.send(:loopback_ipv6_subnets).detect(false) { |i| IPAddr.new(i).include?(address) }
+  end
+
+  def test_link_local_ip_v6_cidr
+    address = @tester.link_local_ip_v6_cidr
+    assert Faker::Internet.send(:link_local_ipv6_subnets).detect(false) { |i| IPAddr.new(i).include?(address) }
   end
 
   def test_slug
