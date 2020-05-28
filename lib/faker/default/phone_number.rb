@@ -2,31 +2,38 @@
 
 module Faker
   class PhoneNumber < Base
+    LOCAL = 'local'
+    INTL = 'intl'
+
     class << self
       ##
       # Produces a random phone number in a random format (may or may not have a country code, extension and can have different dividers).
       #
+      # @param type [String] Type of phone_number to generate (local or International)
       # @return [String]
       #
       # @example
-      #   Faker::PhoneNumber.phone_number #=> "397.693.1309 x4321"
+      #   Faker::PhoneNumber.phone_number(type = LOCAL) #=> "333-333-3333"
+      #   Faker::PhoneNumber.phone_number(type = INTL) #=> "+1-333-333-3333"
       #
-      # @faker.version 0.3.0
-      def phone_number
-        parse('phone_number.formats')
+      # @faker.version next
+      def phone_number(type = LOCAL)
+        parse("contact_number.phone_number.formats.#{type}")
       end
 
       ##
       # Produces a random cell phone number in a random format (may or may not have a country code and can have different dividers).
       #
+      # @param type [String] Type of cell_phone to generate (local or International)
       # @return [String]
       #
       # @example
-      #   Faker::PhoneNumber.cell_phone #=> "(186)285-7925"
+      #   Faker::PhoneNumber.cell_phone(type = LOCAL) #=> "333-333-3333"
+      #   Faker::PhoneNumber.cell_phone(type = INTL) #=> "+1-333-333-3333"
       #
-      # @faker.version 1.0.0
-      def cell_phone
-        parse('cell_phone.formats')
+      # @faker.version next
+      def cell_phone(type = LOCAL)
+        parse("contact_number.cell_phone.formats.#{type}")
       end
 
       ##
@@ -39,7 +46,7 @@ module Faker
       #
       # @faker.version 1.9.2
       def country_code
-        "+#{fetch('country_code')}"
+        fetch('contact_number.country_code')
       end
 
       ##
@@ -52,7 +59,7 @@ module Faker
       #
       # @faker.version 1.9.2
       def phone_number_with_country_code
-        "#{country_code} #{phone_number}"
+        "#{country_code}#{phone_number(INTL)}"
       end
 
       ##
@@ -65,7 +72,7 @@ module Faker
       #
       # @faker.version 1.9.2
       def cell_phone_with_country_code
-        "#{country_code} #{cell_phone}"
+        "#{country_code}#{cell_phone(INTL)}"
       end
 
       ##
@@ -82,7 +89,7 @@ module Faker
       end
 
       ##
-      # Produces a random US or Canada-based area code.
+      # Produces a random US, Mexico or Canada-based area code.
       #
       # @return [String]
       #
@@ -91,13 +98,13 @@ module Faker
       #
       # @faker.version 1.3.0
       def area_code
-        fetch('phone_number.area_code')
+        fetch('contact_number.area_code')
       rescue I18n::MissingTranslationData
         nil
       end
 
       ##
-      # Produces a random US or Canada-based exchange code.
+      # Produces a random US, Mexico or Canada-based exchange code.
       #
       # @return [String]
       #
@@ -106,13 +113,13 @@ module Faker
       #
       # @faker.version 1.3.0
       def exchange_code
-        fetch('phone_number.exchange_code')
+        fetch('contact_number.exchange_code')
       rescue I18n::MissingTranslationData
         nil
       end
 
       ##
-      # Produces a random US or Canada-based extension / subscriber number. Can be used for both extensions and last four digits of phone number.
+      # Produces a random US, Mexico or Canada-based extension / subscriber number. Can be used for both extensions and last four digits of phone number.
       #
       # @param length [Integer] Speficies the length of the return value.
       # @return [String]
