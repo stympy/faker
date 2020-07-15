@@ -578,8 +578,8 @@ en:
       street_address:
         - "#{building_number} #{street_name}"
       full_address:
-        - "#{street_address}, #{city}, #{state_abbr} #{zip_code}"
-        - "#{secondary_address} #{street_address}, #{city}, #{state_abbr} #{zip_code}"
+        - "#{street_address}, #{city}, #{state_abbr} #{postcode}"
+        - "#{secondary_address} #{street_address}, #{city}, #{state_abbr} #{postcode}"
       mail_box:
         - "PO Box ##"
         - "PO Box ###"
