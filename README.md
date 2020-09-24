@@ -243,6 +243,7 @@ gem 'faker', :git => 'https://github.com/faker-ruby/faker.git', :branch => 'mast
   - [Faker::Games::Heroes](doc/games/heroes.md)
   - [Faker::Games::HeroesOfTheStorm](doc/games/heroes_of_the_storm.md)
   - [Faker::Games::LeagueOfLegends](doc/games/league_of_legends.md)
+  - [Faker::Games::MagicTheGathering](doc/games/magic_the_gathering.md)
   - [Faker::Games::Myst](doc/games/myst.md)
   - [Faker::Games::Overwatch](doc/games/overwatch.md)
   - [Faker::Games::Pokemon](doc/games/pokemon.md)
