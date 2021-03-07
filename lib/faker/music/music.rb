@@ -128,6 +128,82 @@ module Faker
       def genre
         fetch('music.genres')
       end
+
+      ##
+      # Produces the prefix of a musical sub-genre.
+      #
+      # @return [String]
+      #
+      # @example
+      #   Faker::Music.subgenre_prefix #=> "Post"
+      #
+      # @faker.version next
+      def subgenre_prefix
+        fetch('music.subgenres.prefixes')
+      end
+
+      ##
+      ##
+      # Produces an adjective describing a musical sub-genre.
+      #
+      # @return [String]
+      #
+      # @example
+      #   Faker::Music.subgenre_adjective #=> "Progressive"
+      #
+      # @faker.version next
+      def subgenre_adjective
+        fetch('music.subgenres.adjectives')
+      end
+
+      # Produces the postfix of a musical sub-genre.
+      #
+      # @return [String]
+      #
+      # @example
+      #   Faker::Music.subgenre_postfix #=> "Wave"
+      #
+      # @faker.version next
+      def subgenre_postfix
+        fetch('music.subgenres.postfixes')
+      end
+
+      ##
+      # Produces the name of a musical sub-genre (satirical).
+      #
+      # @return [String]
+      #
+      # @example
+      #   Faker::Music.subgenre #=> "Post Progressive Minimalist Folkwave"
+      #
+      # @faker.version next
+      def subgenre
+        [].tap do |array|
+          array << randomize(0.2, subgenre_prefix)
+          randomize(0.5, 1, 2).times { array << subgenre_adjective.to_s }
+          array << randomize(0.1, demonym)
+          array << randomize(0.1, "#{instrument} and #{instrument}")
+          array << randomize(0.1, fetch('verbs.base').capitalize)
+          array << randomize(0.05, genre)
+          array << genre.to_s + randomize(0.4, subgenre_postfix.downcase, '')
+        end.uniq.compact.join(' ')
+      end
+
+      private
+
+      def randomize(chance, true_return, false_return = nil)
+        (Faker::Config.random.rand < chance ? true_return : false_return)
+      end
+
+      def demonym
+        [].tap do |array|
+          cardinal = randomize(0.4, fetch('compass.cardinal.word').capitalize)
+          coast = randomize(0.6, 'Coast') if cardinal
+          array << cardinal
+          array << coast
+          array << fetch('demographic.demonym').split unless coast
+        end.uniq.compact.join(' ')
+      end
     end
   end
 end
