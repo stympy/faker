@@ -171,6 +171,7 @@ gem 'faker', :git => 'https://github.com/faker-ruby/faker.git', :branch => 'mast
   - [Faker::GreekPhilosophers](doc/default/greek_philosophers.md)
   - [Faker::Hacker](doc/default/hacker.md)
   - [Faker::Hipster](doc/default/hipster.md)
+  - [Faker::Holiday](doc/default/holiday.md)
   - [Faker::House](doc/default/house.md)
   - [Faker::IDNumber](doc/default/id_number.md)
   - [Faker::IndustrySegments](doc/default/industry_segments.md)
