@@ -28,6 +28,19 @@ module Faker
       def quote
         fetch('movie.quote')
       end
+
+      ##
+      # Produces a director for a movie.
+      #
+      # @return [String]
+      #
+      # @example
+      #   Faker::Movie.director #=> "Quentin Tarantino"
+      #
+      # @faker.version next
+      def director
+        fetch('movie.director')
+      end
     end
   end
 end
