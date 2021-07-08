@@ -271,14 +271,34 @@ module Faker
       #   Faker::Vehicle.license_plate(state_abbreviation: 'FL') #=> "977 UNU"
       #
       # @faker.version 1.6.4
-      def license_plate(legacy_state_abreviation = NOT_GIVEN, state_abbreviation: '')
+      def license_plate(legacy_state_abbreviation = NOT_GIVEN, state_abbreviation: '')
         warn_for_deprecated_arguments do |keywords|
-          keywords << :state_abbreviation if legacy_state_abreviation != NOT_GIVEN
+          keywords << :state_abbreviation if legacy_state_abbreviation != NOT_GIVEN
         end
 
         return regexify(bothify(fetch('vehicle.license_plate'))) if state_abbreviation.empty?
 
         key = "vehicle.license_plate_by_state.#{state_abbreviation}"
+        regexify(bothify(fetch(key)))
+      end
+
+      ##
+      # Produces a random Mercosur license plate number.
+      #
+      # @param state_abbreviation [String] Two letter state abbreviation for license plate generation.
+      # @return [String]
+      #
+      # @example
+      #   Faker::Vehicle.mercosur_license_plate #=> "QTP5F71"
+      #   Faker::Vehicle.mercosur_license_plate(state_abbreviation: 'RN') #=> "MXH3B71"
+      #
+      # @faker.version next
+      def mercosur_license_plate(state_abbreviation: '')
+        is_pt_br = Faker::Config.locale == 'pt-BR'
+        key = 'vehicle.mercosur_license_plate'
+        return regexify(bothify(fetch(key))) if state_abbreviation.empty?
+
+        key = key + '.by_state.' + state_abbreviation if is_pt_br
         regexify(bothify(fetch(key)))
       end
 
