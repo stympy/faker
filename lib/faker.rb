@@ -184,10 +184,10 @@ module Faker
       #   name:
       #     girls_name: ["Alice", "Cheryl", "Tatiana"]
       # Then you can call Faker::Name.girls_name and it will act like #first_name
-      def method_missing(mth, *args, &block)
+      def method_missing(method_name, *args, &block)
         super unless @flexible_key
 
-        if (translation = translate("faker.#{@flexible_key}.#{mth}"))
+        if (translation = translate("faker.#{@flexible_key}.#{method_name}"))
           sample(translation)
         else
           super
@@ -306,6 +306,32 @@ module Faker
           [file, line]
         end
         # rubocop:enable Style/GuardClause
+      end
+    end
+  end
+
+  class << self
+    def method_missing(method_name, *args, &block)
+      klass = faker_module(method_name)
+      klass || super
+    end
+
+    def respond_to_missing?(method_name)
+      faker_module(method_name) ? true : false
+    end
+
+    def name
+      Faker::Name
+    end
+
+    private
+
+    def faker_module(name)
+      class_name = name.to_s.gsub(/^\w|_\w/, &:upcase).delete('_')
+      begin
+        Faker.const_get(class_name)
+      rescue NameError
+        nil
       end
     end
   end
