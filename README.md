@@ -292,6 +292,7 @@ gem 'faker', :git => 'https://github.com/faker-ruby/faker.git', :branch => 'mast
 
 ### Music
   - [Faker::Music](doc/music/music.md)
+  - [Faker::Music::Clash](doc/music/clash.md)
   - [Faker::Music::GratefulDead](doc/music/grateful_dead.md)
   - [Faker::Music::Hiphop](doc/music/hiphop.md)
   - [Faker::Music::Opera](doc/music/opera.md)
