@@ -25,6 +25,7 @@ development.
     - [Deterministic Random](#deterministic-random)
   - [Generators](#generators)
     - [Default](#default)
+    - [Bibles](#bibles)
     - [Blockchain](#blockchain)
     - [Books](#books)
     - [Fantasy](#fantasy)
@@ -218,6 +219,9 @@ gem 'faker', :git => 'https://github.com/faker-ruby/faker.git', :branch => 'mast
   - [Faker::Vehicle](doc/default/vehicle.md)
   - [Faker::Verbs](doc/default/verbs.md)
   - [Faker::WorldCup](doc/default/world_cup.md)
+
+### Bibles
+  - [Faker::Bibles::KingJames](doc/bibles/king_james.md)
 
 ### Blockchain
   - [Faker::Blockchain::Aeternity](doc/blockchain/aeternity.md)
