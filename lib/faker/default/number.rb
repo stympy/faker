@@ -94,6 +94,36 @@ module Faker
       end
 
       ##
+      # Produces a number between two provided values. Boundaries are inclusive.
+      #
+      # @param l_digits [Integer] Number of digits that the generated decimal should have to the left of the decimal point.
+      # @param r_digits [Integer] Number of digits that the generated decimal should have to the right of the decimal point.
+      # @param range [Range] The range from which to generate a number.
+      # @return [Float]
+      #
+      # @example
+      #   Faker::Number.decimal_within(l_digits: 1, r_digits: 1, range: 1..10) #=> 4.0
+      #
+      # @faker.version next
+      def decimal_within(
+        legacy_l_digits = NOT_GIVEN,
+        legacy_r_digits = NOT_GIVEN,
+        legacy_range = NOT_GIVEN,
+        l_digits: 5, r_digits: 2, range: 1.00..5000.00
+      )
+        warn_for_deprecated_arguments do |keywords|
+          keywords << :l_digits if legacy_l_digits != NOT_GIVEN
+          keywords << :r_digits if legacy_r_digits != NOT_GIVEN
+          keywords << :range if legacy_range != NOT_GIVEN
+        end
+
+        return if l_digits < 1 || r_digits < 1
+        r_d = rand(range.min..range.max).round
+        l_d = rand(range.min..range.max).round
+        "#{l_d}.#{r_d}".to_f
+      end
+
+      ##
       # Produces a non-zero single-digit integer.
       #
       # @return [Integer]
